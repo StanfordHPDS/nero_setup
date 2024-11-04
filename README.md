@@ -1,12 +1,12 @@
 
-# nero_setup
+# Setting up a new Nero instance
 
 <!-- badges: start -->
 <!-- badges: end -->
 
-Fill in the variables 
+This repository contains instructions for setting up a new Nero instance. First, you'll create a new instance with the `gcloud` command. Then, you'll run a script to install and set up tools that we commonly use.
 
-To create `my-instance` on the Nero project `som-nero-phi-sherrir-afc`, I would run:
+For example, to create `my-instance` on the Nero project `som-nero-phi-sherrir-afc`, I would run:
 
 ```bash
 INSTANCE_NAME="${INSTANCE_NAME:-my-instance}"
@@ -38,7 +38,7 @@ gcloud compute instances create "$INSTANCE_NAME" \
   --reservation-affinity=any
 ```
 
-Then connect with 
+Then connect to the server via ssh with:
 
 ```bash
 gcloud compute ssh --zone "$ZONE" "$INSTANCE_NAME" --project "$PROJECT_ID"
@@ -56,7 +56,13 @@ After the script as completed, logout with the `logout` command and log back in 
 gcloud compute ssh --zone "$ZONE" "$INSTANCE_NAME" --project "$PROJECT_ID" -- -L 8787:localhost:8787 -L 8080:localhost:8080
 ```
 
-## Git and GitHub
+## Using the instance
+
+Each instance has the most recent versions of Python and R available for Ubuntu 24. Both `pip` and `install.packages()` use [Posit Public Package Manager](https://posit.co/products/cloud/public-package-manager/) to install binaries for packages. Additionally, the instance has Quarto, conda, uv, duckdb, gh, tinytex, and Rust installed, as well as a number of common system libraries used in data science packages.
+
+If you think another tool should be included in the default setup, please file an issue or pull request.
+
+### Git and GitHub
 
 Authorize your GitHub credentials with
 
@@ -71,7 +77,7 @@ git config --global user.name "Jane Doe"
 git config --global user.email "jane@example.com"
 ```
 
-## VS Code (<http://localhost:8080/>)
+### VS Code (<http://localhost:8080/>)
 
 VS Code should now be running. If you open <http://localhost:8080/>, you'll get a start up message that tells you where the credential file is. You can see the password with
 
@@ -81,7 +87,7 @@ cat /path/to/the/file/code-server/config.yaml
 
 Make sure to replace the path with the path in the startup message.
 
-## RStudio Server (<http://localhost:8787/>)
+### RStudio Server (<http://localhost:8787/>)
 
 RStudio Server should now be running. You'll need to add a user for yourself. Run
 
