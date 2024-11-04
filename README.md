@@ -14,12 +14,12 @@ PROJECT_ID="${PROJECT_ID:-som-nero-phi-sherrir-afc}"
 ZONE="${ZONE:-us-west1-c}"
 MACHINE_TYPE="${MACHINE_TYPE:-e2-medium}"
 DISK_SIZE="${DISK_SIZE:-10}"  # in GB
-
+  
 # Recommended as the setup script assumes this OS
-IMAGE_NAME="${IMAGE_NAME:-ubuntu-2404-noble-amd64-v20241004}" 
+IMAGE_NAME="${IMAGE_NAME:-ubuntu-2404-noble-amd64-v20241004}"
 IMAGE_PROJECT="${IMAGE_PROJECT:-ubuntu-os-cloud}"
 
-# Create the instance with fixed values inline
+# Create instance with above specs
 gcloud compute instances create "$INSTANCE_NAME" \
   --project="$PROJECT_ID" \
   --zone="$ZONE" \
@@ -30,7 +30,7 @@ gcloud compute instances create "$INSTANCE_NAME" \
   --service-account=311816845192-compute@developer.gserviceaccount.com \
   --scopes=https://www.googleapis.com/auth/devstorage.read_only,https://www.googleapis.com/auth/logging.write,https://www.googleapis.com/auth/monitoring.write,https://www.googleapis.com/auth/service.management.readonly,https://www.googleapis.com/auth/servicecontrol,https://www.googleapis.com/auth/trace.append \
   --tags=ssh \
-  --create-disk=auto-delete=yes,boot=yes,device-name="$INSTANCE_NAME",disk-resource-policy="projects/$PROJECT_ID/regions/$(echo $ZONE | cut -d'-' -f1,2)/resourcePolicies/nero-snap-shedule",image-family="$IMAGE_FAMILY",image-project="$IMAGE_PROJECT",mode=rw,size="$DISK_SIZE",type=pd-balanced \
+  --create-disk=auto-delete=yes,boot=yes,device-name="$INSTANCE_NAME",disk-resource-policy="projects/$PROJECT_ID/regions/$(echo $ZONE | cut -d'-' -f1,2)/resourcePolicies/nero-snap-shedule",image="$IMAGE_NAME",image-project="$IMAGE_PROJECT",mode=rw,size="$DISK_SIZE",type=pd-balanced \
   --no-shielded-secure-boot \
   --shielded-vtpm \
   --shielded-integrity-monitoring \
