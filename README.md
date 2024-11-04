@@ -9,15 +9,15 @@ This repository contains instructions for setting up a new Nero instance. First,
 For example, to create `my-instance` on the Nero project `som-nero-phi-sherrir-afc`, I would run:
 
 ```bash
-INSTANCE_NAME="${INSTANCE_NAME:-my-instance}"
-PROJECT_ID="${PROJECT_ID:-som-nero-phi-sherrir-afc}"
-ZONE="${ZONE:-us-west1-c}"
-MACHINE_TYPE="${MACHINE_TYPE:-e2-medium}"
-DISK_SIZE="${DISK_SIZE:-10}"  # in GB
-  
+INSTANCE_NAME="my-instance"
+PROJECT_ID="som-nero-phi-sherrir-afc"
+ZONE="us-west1-c"
+MACHINE_TYPE="e2-medium"
+DISK_SIZE="10" # in GB
+
 # Recommended as the setup script assumes this OS
-IMAGE_NAME="${IMAGE_NAME:-ubuntu-2404-noble-amd64-v20241004}"
-IMAGE_PROJECT="${IMAGE_PROJECT:-ubuntu-os-cloud}"
+IMAGE_NAME="ubuntu-2404-noble-amd64-v20241004"
+IMAGE_PROJECT="ubuntu-os-cloud"
 
 # Create instance with above specs
 gcloud compute instances create "$INSTANCE_NAME" \
@@ -38,7 +38,7 @@ gcloud compute instances create "$INSTANCE_NAME" \
   --reservation-affinity=any
 ```
 
-Then connect to the server via ssh with:
+Note that it may take a moment for the server to initialize before you can connect. Then connect to the server via ssh with:
 
 ```bash
 gcloud compute ssh --zone "$ZONE" "$INSTANCE_NAME" --project "$PROJECT_ID"
