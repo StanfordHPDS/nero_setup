@@ -12,7 +12,9 @@ For example, to create `my-instance` on the Nero project `som-nero-phi-sherrir-a
 INSTANCE_NAME="my-instance"
 PROJECT_ID="som-nero-phi-sherrir-afc"
 ZONE="us-west1-c"
-MACHINE_TYPE="e2-medium"
+# see all machine types with:
+# gcloud compute machine-types list --zones="$ZONE"
+MACHINE_TYPE="e2-medium" 
 DISK_SIZE="100" # in GB
 
 # Recommended as the setup script assumes this OS
