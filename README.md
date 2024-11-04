@@ -101,3 +101,37 @@ sudo adduser your_username
 ```
 
 and follow the prompts. Then, visit <http://localhost:8787/> and enter the credentials you just created.
+
+## Modifying the instance
+
+### Changing disk size
+
+Find the name of the disk for your instance using gcloud:
+
+```bash
+gcloud compute disks list --project="${PROJECT_ID}"
+```
+
+Then, resize it:
+
+```bash
+gcloud compute disks resize your-disk-name --size=234GB --zone="${ZONE}"
+```
+
+See the [gcloud documentation](https://cloud.google.com/sdk/gcloud/reference/compute/disks/resize) for more details.
+
+After you've resized, you may need to resize it on the instance, too. SSH into your instance, then run this command in the terminal for information on your disks:
+
+```bash
+df -h
+```
+
+If the disk doesn't have approximately the same size you resized to, run:
+
+```bash
+sudo resize2fs /name/of/disk
+```
+
+Where `/name/of/disk` is the name listed in `df -h`. 
+
+Run `df -h` again to confirm the disk is resized.
