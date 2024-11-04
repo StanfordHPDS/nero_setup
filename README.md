@@ -10,7 +10,7 @@ For example, to create `my-instance` on the Nero project `som-nero-phi-sherrir-a
 
 ```bash
 INSTANCE_NAME="${INSTANCE_NAME:-my-instance}"
-PROJECT_ID="${2PROJECT_ID:-som-nero-phi-sherrir-afc}"
+PROJECT_ID="${PROJECT_ID:-som-nero-phi-sherrir-afc}"
 ZONE="${ZONE:-us-west1-c}"
 MACHINE_TYPE="${MACHINE_TYPE:-e2-medium}"
 DISK_SIZE="${DISK_SIZE:-10}"  # in GB
