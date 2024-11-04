@@ -47,13 +47,15 @@ gcloud compute ssh --zone "$ZONE" "$INSTANCE_NAME" --project "$PROJECT_ID"
 When you've successfully ssh'd into the server, run the installation script:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/StanfordHPDS/gcp_setup_script/main/setup.sh -o /tmp/setup.sh && bash /tmp/setup.sh
+curl -fsSL https://raw.githubusercontent.com/StanfordHPDS/gcp_setup_script/main/setup.sh \
+  -o /tmp/setup.sh && bash /tmp/setup.sh
 ```
 
 After the script as completed, logout with the `logout` command and log back in with the ports for VS Code and RStudio open. This is also intended to finish updating the paths for all the new software.
 
 ```bash
-gcloud compute ssh --zone "$ZONE" "$INSTANCE_NAME" --project "$PROJECT_ID" -- -L 8787:localhost:8787 -L 8080:localhost:8080
+gcloud compute ssh --zone "$ZONE" "$INSTANCE_NAME" --project "$PROJECT_ID" \
+  -- -L 8787:localhost:8787 -L 8080:localhost:8080
 ```
 
 ## Using the instance
