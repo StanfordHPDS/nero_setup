@@ -13,7 +13,7 @@ INSTANCE_NAME="my-instance"
 PROJECT_ID="som-nero-phi-sherrir-afc"
 ZONE="us-west1-c"
 MACHINE_TYPE="e2-medium"
-DISK_SIZE="10" # in GB
+DISK_SIZE="100" # in GB
 
 # Recommended as the setup script assumes this OS
 IMAGE_NAME="ubuntu-2404-noble-amd64-v20241004"
@@ -47,9 +47,10 @@ gcloud compute ssh --zone "$ZONE" "$INSTANCE_NAME" --project "$PROJECT_ID"
 When you've successfully ssh'd into the server, run the installation script:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/StanfordHPDS/gcp_setup_script/main/setup.sh \
-  -o /tmp/setup.sh && bash /tmp/setup.sh
+curl -fsSL https://raw.githubusercontent.com/StanfordHPDS/gcp_setup_script/main/setup.sh | bash
 ```
+
+This process will take several minutes to run.
 
 After the script as completed, logout with the `logout` command and log back in with the ports for VS Code and RStudio open. This is also intended to finish updating the paths for all the new software.
 
