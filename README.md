@@ -95,7 +95,7 @@ git config --global user.email "jane@example.com"
 
 ### gcloud and BigQuery
 
-You should be able to connect to BigQuery without authorization. For new code, prefer connecting without explicit authorization.
+**You should be able to connect to BigQuery on the instance without authorization**. For new code, prefer connecting without explicit authorization.
 
 However, if older code you are running expects a credentials file, you can create one with:
 
