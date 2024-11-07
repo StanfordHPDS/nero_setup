@@ -107,7 +107,7 @@ Note where the file is created in case you need to reference it.
 
 ### conda
 
-You'll need to initiate conda and add `conda-forge` to use it for most projects.
+After creating the instance, you'll need to initiate conda and add `conda-forge` to use it for most projects. You should only need to run these commands once.
 
 ```bash
 conda init
