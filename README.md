@@ -9,6 +9,7 @@ This repository contains instructions for setting up a new Nero instance. First,
 For example, to create `my-instance` on the Nero project `som-nero-phi-sherrir-afc`, I would run:
 
 ```bash
+# CHANGE THIS TO THE NAME YOU WANT FOR YOUR INSTANCE
 INSTANCE_NAME="my-instance"
 PROJECT_ID="som-nero-phi-sherrir-afc"
 ZONE="us-west1-c"
@@ -16,7 +17,7 @@ ZONE="us-west1-c"
 # gcloud compute machine-types list --zones="$ZONE"
 # 8 vCPUs (4 cores) and 30 GB RAM
 MACHINE_TYPE="n1-standard-8" 
-DISK_SIZE="100" # in GB
+DISK_SIZE="200" # in GB
 
 # Recommended as the setup script assumes this OS
 IMAGE_NAME="ubuntu-2404-noble-amd64-v20241004"
@@ -31,7 +32,7 @@ gcloud compute instances create "$INSTANCE_NAME" \
   --maintenance-policy=MIGRATE \
   --provisioning-model=STANDARD \
   --service-account=311816845192-compute@developer.gserviceaccount.com \
-  --scopes=https://www.googleapis.com/auth/devstorage.read_only,https://www.googleapis.com/auth/logging.write,https://www.googleapis.com/auth/monitoring.write,https://www.googleapis.com/auth/service.management.readonly,https://www.googleapis.com/auth/servicecontrol,https://www.googleapis.com/auth/trace.append \
+  --scopes=https://www.googleapis.com/auth/devstorage.read_only,https://www.googleapis.com/auth/logging.write,https://www.googleapis.com/auth/monitoring.write,https://www.googleapis.com/auth/service.management.readonly,https://www.googleapis.com/auth/servicecontrol,https://www.googleapis.com/auth/trace.append,https://www.googleapis.com/auth/bigquery,https://www.googleapis.com/auth/cloud-platform \
   --tags=ssh \
   --create-disk=auto-delete=yes,boot=yes,device-name="$INSTANCE_NAME",disk-resource-policy="projects/$PROJECT_ID/regions/$(echo $ZONE | cut -d'-' -f1,2)/resourcePolicies/nero-snap-shedule",image="$IMAGE_NAME",image-project="$IMAGE_PROJECT",mode=rw,size="$DISK_SIZE",type=pd-balanced \
   --no-shielded-secure-boot \
@@ -47,7 +48,7 @@ Note that it may take a moment for the server to initialize before you can conne
 gcloud compute ssh --zone "$ZONE" "$INSTANCE_NAME" --project "$PROJECT_ID"
 ```
 
-When you've successfully ssh'd into the server, run the installation script:
+When you've successfully SSH'd into the server, run the installation script:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/StanfordHPDS/gcp_setup_script/main/setup.sh | bash
@@ -55,7 +56,16 @@ curl -fsSL https://raw.githubusercontent.com/StanfordHPDS/gcp_setup_script/main/
 
 This process will take several minutes to run.
 
-After the script as completed, logout with the `logout` command and log back in with the ports for VS Code and RStudio open. This is also intended to finish updating the paths for all the new software.
+After the script as completed, you'll likely need to reboot the server to finish updating the Linux kernel. Eventually, this will disconnect you, so log out after rebooting.
+
+```bash
+sudo reboot
+logout
+```
+
+It will take a few moments for the server to reboot.
+
+Log back in with the ports for VS Code and RStudio open. This is also intended to finish updating the paths for all the new software.
 
 ```bash
 gcloud compute ssh --zone "$ZONE" "$INSTANCE_NAME" --project "$PROJECT_ID" \
@@ -82,6 +92,40 @@ And tell git who you are
 git config --global user.name "Jane Doe"
 git config --global user.email "jane@example.com"
 ```
+
+### gcloud and BigQuery
+
+You should be able to connect to BigQuery without authorization. For new code, prefer connecting without explicit authorization.
+
+However, if older code you are running expects a credentials file, you can create one with:
+
+```bash
+gcloud auth application-default login
+```
+
+Note where the file is created in case you need to reference it. 
+
+### conda
+
+You'll need to initiate conda and add `conda-forge` to use it for most projects.
+
+```bash
+conda init
+conda config --add channels defaults
+conda config --add channels conda-forge
+```
+
+You may need to log out and log back in for this to take effect.
+
+Once you've run `conda init`, you will always be in a conda environment (`base` by default), so make sure to prefer `conda install` over `pip` and to make a new environment for any project you are working on with:
+
+```bash
+conda create --name <my-env> python=<python_version>
+```
+
+If you are not sure which Python version to use, check `python --version` to see what you currently have installed as the default.
+
+Note that the instance also has uv installed, an alternate way to manage packages and environments in Python, but this for future exploration. Currently, our lab agreement is to use conda.
 
 ### VS Code (<http://localhost:8080/>)
 
@@ -113,7 +157,7 @@ Find the name of the disk for your instance using gcloud:
 gcloud compute disks list --project="${PROJECT_ID}"
 ```
 
-Then, resize it:
+Then, resize it with `gcloud compute disks resize`. For instance, to change the disk `your-disk-name` to be 234 GB, I would run this command:
 
 ```bash
 gcloud compute disks resize your-disk-name --size=234GB --zone="${ZONE}"
