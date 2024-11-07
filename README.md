@@ -14,7 +14,8 @@ PROJECT_ID="som-nero-phi-sherrir-afc"
 ZONE="us-west1-c"
 # see all machine types with:
 # gcloud compute machine-types list --zones="$ZONE"
-MACHINE_TYPE="e2-medium" 
+# 8 vCPUs (4 cores) and 30 GB RAM
+MACHINE_TYPE="n1-standard-8" 
 DISK_SIZE="100" # in GB
 
 # Recommended as the setup script assumes this OS
