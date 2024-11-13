@@ -56,16 +56,11 @@ curl -fsSL https://raw.githubusercontent.com/StanfordHPDS/gcp_setup_script/main/
 
 This process will take several minutes to run.
 
-After the script as completed, you'll likely need to reboot the server to finish updating the Linux kernel. Eventually, this will disconnect you, so log out after rebooting.
-
-```bash
-sudo reboot
-logout
-```
+After the script as completed, the server will reboot to finish updating the Linux kernel. This is also intended to finish updating the paths for all the new software. Eventually, this will disconnect you.
 
 It will take a few moments for the server to reboot.
 
-Log back in with the ports for VS Code and RStudio open. This is also intended to finish updating the paths for all the new software.
+Log back in with the ports for VS Code and RStudio open. 
 
 ```bash
 gcloud compute ssh --zone "$ZONE" "$INSTANCE_NAME" --project "$PROJECT_ID" \
@@ -107,17 +102,7 @@ Note where the file is created in case you need to reference it.
 
 ### conda
 
-After creating the instance, you'll need to initiate conda and add `conda-forge` to use it for most projects. You should only need to run these commands once.
-
-```bash
-conda init
-conda config --add channels defaults
-conda config --add channels conda-forge
-```
-
-You may need to log out and log back in for this to take effect.
-
-Once you've run `conda init`, you will always be in a conda environment (`base` by default), so make sure to prefer `conda install` over `pip` and to make a new environment for any project you are working on with:
+Conda has been set up and configured on the instance already. You will always be in a conda environment (`base` by default), so make sure to prefer `conda install` over `pip` and to make a new environment for any project you are working on with:
 
 ```bash
 conda create --name <my-env> python=<python_version>
@@ -137,6 +122,18 @@ cat /path/to/the/file/code-server/config.yaml
 
 Make sure to replace the path with the path in the startup message.
 
+The Quarto and Jupyter extensions are already installed.
+
+We also recommend activating a Python interpreter for your session, ideally matching a conda environment you have set up for the project. This allows the different spaces (Quarto, IPython, etc) to use the same Python interpreter.
+
+First, Use `CMD/CTRL + Shift + P` to open the command palette and search for the Python interpreter option from the Python extension.
+
+![](img/select_interpret.png)
+
+Then pick the environment and interpreter you want.
+
+![](img/activate_env.png)
+
 ### RStudio Server (<http://localhost:8787/>)
 
 RStudio Server should now be running. You'll need to add a user for yourself. Run
@@ -146,6 +143,8 @@ sudo adduser your_username
 ```
 
 and follow the prompts. Then, visit <http://localhost:8787/> and enter the credentials you just created.
+
+RStudio is configured to run R in a [blank slate](https://rstats.wtf/source-and-blank-slates#always-start-r-with-a-blank-slate) by default.
 
 ## Modifying the instance
 
