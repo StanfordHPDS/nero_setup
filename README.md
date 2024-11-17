@@ -243,4 +243,4 @@ gcloud compute instances set-machine-type "$INSTANCE_NAME" \
 gcloud compute instances start "$INSTANCE_NAME" --zone="$ZONE"
 ```
 
-If you've set the machine type to a high-compute type for a temporary computation, be sure to change it back to the original one to save costs.
+If you've set the machine type to a high-compute type for a temporary computation, be sure to change it back to the original one when you are done to save costs.
