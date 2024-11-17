@@ -6,13 +6,21 @@
 
 This repository contains instructions for setting up a new Nero instance. First, you'll create a new instance with the `gcloud` command. Then, you'll run a script to install and set up tools that we commonly use.
 
-For example, to create `my-instance` on the Nero project `som-nero-phi-sherrir-afc`, I would run:
+For example, to create `my-instance` on the Nero project `som-nero-phi-sherrir-afc`, set the bash variables `INSTANCE_NAME` and `PROJECT_ID`:
 
 ```bash
 # CHANGE THIS TO THE NAME YOU WANT FOR YOUR INSTANCE
 INSTANCE_NAME="my-instance"
 PROJECT_ID="som-nero-phi-sherrir-afc"
+```
+
+![](img/first_vars.gif)
+
+Additionally, set `ZONE`, `MACHINE_TYPE`, `DISK_SIZE`, `IMAGE_NAME`, and `IMAGE_PROJECT`, changing any values you want to adjust.
+
+```bash
 ZONE="us-west1-c"
+
 # see all machine types with:
 # gcloud compute machine-types list --zones="$ZONE"
 # 8 vCPUs (4 cores) and 30 GB RAM
@@ -22,7 +30,13 @@ DISK_SIZE="200" # in GB
 # Recommended as the setup script assumes this OS
 IMAGE_NAME="ubuntu-2404-noble-amd64-v20241004"
 IMAGE_PROJECT="ubuntu-os-cloud"
+```
 
+![](img/second_vars.gif)
+
+Then, run the `gcloud compute instances create` command below:
+
+```bash
 # Create instance with above specs
 gcloud compute instances create "$INSTANCE_NAME" \
   --project="$PROJECT_ID" \
@@ -42,11 +56,17 @@ gcloud compute instances create "$INSTANCE_NAME" \
   --reservation-affinity=any
 ```
 
+(Note: this gif has been trimmed, so creating the instance will likely take longer than in this clip.)
+
+![](img/create_instance.gif)
+
 Note that it may take a moment for the server to initialize before you can connect. Then connect to the server via ssh with:
 
 ```bash
 gcloud compute ssh --zone "$ZONE" "$INSTANCE_NAME" --project "$PROJECT_ID"
 ```
+
+![](img/ssh.gif)
 
 When you've successfully SSH'd into the server, run the installation script:
 
@@ -54,9 +74,13 @@ When you've successfully SSH'd into the server, run the installation script:
 curl -fsSL https://raw.githubusercontent.com/StanfordHPDS/gcp_setup_script/main/setup.sh | bash
 ```
 
+![](img/install_start.gif)
+
 This process will take several minutes to run.
 
 After the script as completed, the server will reboot to finish updating the Linux kernel. This is also intended to finish updating the paths for all the new software. Eventually, this will disconnect you.
+
+![](img/install_finished.gif)
 
 It will take a few moments for the server to reboot.
 
