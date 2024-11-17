@@ -4,7 +4,9 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-This repository contains instructions for setting up a new Nero instance. First, you'll create a new instance with the `gcloud` command. Then, you'll run a script to install and set up tools that we commonly use.
+This repository contains instructions for setting up a new Nero instance. First, you'll create a new instance with the [`gcloud`](https://cloud.google.com/sdk/docs/install) command. Then, you'll run a script to install and set up tools that we commonly use.
+
+**NOTE**: These instructions are in bash and thus for Mac and Linux users. If you are a Windows user, you'll either need to adapt these instructions for PowerShell or use [Windows Subsystem for Linux (WSL)](https://learn.microsoft.com/en-us/windows/wsl/install).
 
 For example, to create `my-instance` on the Nero project `som-nero-phi-sherrir-afc`, set the bash variables `INSTANCE_NAME` and `PROJECT_ID`:
 
@@ -93,7 +95,11 @@ gcloud compute ssh --zone "$ZONE" "$INSTANCE_NAME" --project "$PROJECT_ID" \
 
 ## Using the instance
 
-Each instance has the most recent versions of Python and R available for Ubuntu 24. Both `pip` and `install.packages()` use [Posit Public Package Manager](https://posit.co/products/cloud/public-package-manager/) to install binaries for packages. Additionally, the instance has [Quarto](https://quarto.org/), [conda](https://docs.conda.io/en/latest/), [uv](https://docs.astral.sh/uv/), [duckdb](https://duckdb.org/), [gh](https://cli.github.com/), [TinyTeX](https://yihui.org/tinytex/), and [Rust](https://www.rust-lang.org/) installed, as well as a number of common system libraries used in data science packages.
+We recommend stopping the instance when you are not using it to save costs.
+
+### Software
+
+Each instance has the most recent versions of Python and R available for Ubuntu 24. Both `pip` and `install.packages()` use [Posit Public Package Manager](https://posit.co/products/cloud/public-package-manager/) to install binaries for packages. Additionally, the instance has [Quarto](https://quarto.org/), [conda](https://docs.conda.io/en/latest/), [ruff](https://docs.astral.sh/ruff/), [sqlfluff](https://sqlfluff.com/), [uv](https://docs.astral.sh/uv/), [duckdb](https://duckdb.org/), [gh](https://cli.github.com/), [TinyTeX](https://yihui.org/tinytex/), and [Rust](https://www.rust-lang.org/) installed, as well as a number of common system libraries used in data science packages.
 
 If you think another tool should be included in the default setup, please file an issue or pull request.
 
@@ -146,7 +152,7 @@ cat /path/to/the/file/code-server/config.yaml
 
 Make sure to replace the path with the path in the startup message.
 
-The Quarto and Jupyter extensions are already installed.
+The Python, Quarto, and Jupyter extensions are already installed.
 
 We also recommend activating a Python interpreter for your session, ideally matching a conda environment you have set up for the project. This allows the different spaces (Quarto, IPython, etc) to use the same Python interpreter.
 
@@ -169,6 +175,14 @@ sudo adduser your_username
 and follow the prompts. Then, visit <http://localhost:8787/> and enter the credentials you just created.
 
 RStudio is configured to run R in a [blank slate](https://rstats.wtf/source-and-blank-slates#always-start-r-with-a-blank-slate) by default.
+
+### Transferring data from buckets
+
+[`gcloud storage`](https://cloud.google.com/sdk/gcloud/reference/storage) allows you to work with Cloud Storage, including buckets. To download data from a bucket, use [`gcloud storage cp`](https://cloud.google.com/sdk/gcloud/reference/storage/cp):
+
+```bash
+gcloud storage cp gs://name_of_bucket/path/to/data ~path/to/data/on/instance
+```
 
 ## Modifying the instance
 
@@ -203,3 +217,30 @@ sudo resize2fs /name/of/disk
 Where `/name/of/disk` is the name listed in `df -h`. 
 
 Run `df -h` again to confirm the disk is resized.
+
+### Changing the machine type
+
+The default value for the `MACHINE_TYPE` is `"n1-standard-8"`, a machine that has 8 vCPUs (4 cores) and 30 GB RAM. You can change the machine type after creation by stopping the instance, running `gcloud compute instances set-machine-type`, and restarting the instance.
+
+For instance, if `"n1-standard-8"` suits most of your needs but you occassionally need to do more intensive computation, you could temporarily change the instance to use `"n1-highmem-32"`, which has has 32 vCPUs and 208 GB RAM. 
+
+```bash
+INSTANCE_NAME="your-instance-name"
+ZONE="your-instance-zone"
+
+# Example: Change to n1-highmem-32
+NEW_MACHINE_TYPE="n1-highmem-32"  
+
+# Stop the instance
+gcloud compute instances stop "$INSTANCE_NAME" --zone="$ZONE"
+
+# Change the machine type
+gcloud compute instances set-machine-type "$INSTANCE_NAME" \
+  --zone="$ZONE" \
+  --machine-type="$NEW_MACHINE_TYPE"
+
+# Start the instance
+gcloud compute instances start "$INSTANCE_NAME" --zone="$ZONE"
+```
+
+If you've set the machine type to a high-compute type for a temporary computation, be sure to change it back to the original one to save costs.
