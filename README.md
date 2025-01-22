@@ -44,13 +44,12 @@ gcloud compute instances create "$INSTANCE_NAME" \
   --project="$PROJECT_ID" \
   --zone="$ZONE" \
   --machine-type="$MACHINE_TYPE" \
-  --network-interface=network-tier=PREMIUM,stack-type=IPV4_ONLY,subnet=nero-subnet \
+  --network-interface=network-tier=PREMIUM,stack-type=IPV4_ONLY \
   --maintenance-policy=MIGRATE \
   --provisioning-model=STANDARD \
-  --service-account=311816845192-compute@developer.gserviceaccount.com \
   --scopes=https://www.googleapis.com/auth/devstorage.read_only,https://www.googleapis.com/auth/logging.write,https://www.googleapis.com/auth/monitoring.write,https://www.googleapis.com/auth/service.management.readonly,https://www.googleapis.com/auth/servicecontrol,https://www.googleapis.com/auth/trace.append,https://www.googleapis.com/auth/bigquery,https://www.googleapis.com/auth/cloud-platform \
   --tags=ssh \
-  --create-disk=auto-delete=yes,boot=yes,device-name="$INSTANCE_NAME",disk-resource-policy="projects/$PROJECT_ID/regions/$(echo $ZONE | cut -d'-' -f1,2)/resourcePolicies/nero-snap-shedule",image="$IMAGE_NAME",image-project="$IMAGE_PROJECT",mode=rw,size="$DISK_SIZE",type=pd-balanced \
+  --create-disk=auto-delete=yes,boot=yes,device-name="$INSTANCE_NAME",image="$IMAGE_NAME",image-project="$IMAGE_PROJECT",mode=rw,size="$DISK_SIZE",type=pd-balanced \
   --no-shielded-secure-boot \
   --shielded-vtpm \
   --shielded-integrity-monitoring \
