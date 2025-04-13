@@ -72,7 +72,7 @@ gcloud compute ssh --zone "$ZONE" "$INSTANCE_NAME" --project "$PROJECT_ID"
 When you've successfully SSH'd into the server, run the installation script:
 
 ```bash
-curl -fsSL https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1.0.2/setup.sh | bash
+curl -fsSL https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1.0.3/setup.sh | bash
 ```
 
 ![](img/install_start.gif)
