@@ -72,7 +72,7 @@ gcloud compute ssh --zone "$ZONE" "$INSTANCE_NAME" --project "$PROJECT_ID"
 When you've successfully SSH'd into the server, run the installation script:
 
 ```bash
-curl -fsSL https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1.1.1/setup.sh | bash
+curl -fsSL https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1.1.2/setup.sh | bash
 ```
 
 ![](img/install_start.gif)
@@ -97,7 +97,7 @@ gcloud compute ssh --zone "$ZONE" "$INSTANCE_NAME" --project "$PROJECT_ID" \
 To update the software on an existing instance, SSH into your server and run:
 
 ```bash
-curl -fsSL https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1.1.1/update.sh | bash
+curl -fsSL https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1.1.2/update.sh | bash
 ```
 
 This will update system packages, R, Quarto, RStudio Server, VS Code, DuckDB, and development tools. Unlike the setup script, no reboot is required.
@@ -110,10 +110,10 @@ You can also update specific components only:
 
 ```bash
 # Update only RStudio Server
-curl -fsSL https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1.1.1/update.sh | bash -s -- --rstudio
+curl -fsSL https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1.1.2/update.sh | bash -s -- --rstudio
 
 # See all options
-curl -fsSL https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1.1.1/update.sh | bash -s -- --help
+curl -fsSL https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1.1.2/update.sh | bash -s -- --help
 ```
 
 ## Using the instance
@@ -122,7 +122,7 @@ We recommend stopping the instance when you are not using it to save costs.
 
 ### Software
 
-Each instance has the most recent versions of Python and R available for Ubuntu 24. Both `pip` and `install.packages()` use [Posit Public Package Manager](https://posit.co/products/cloud/public-package-manager/) to install binaries for packages. Additionally, the instance has [Quarto](https://quarto.org/), [conda](https://docs.conda.io/en/latest/), [ruff](https://docs.astral.sh/ruff/), [sqlfluff](https://sqlfluff.com/), [uv](https://docs.astral.sh/uv/), [duckdb](https://duckdb.org/), [gh](https://cli.github.com/), [TinyTeX](https://yihui.org/tinytex/), and [Rust](https://www.rust-lang.org/) installed, as well as a number of common system libraries used in data science packages.
+Each instance has the most recent versions of Python and R available for Ubuntu 24. Both `pip` and `install.packages()` use [Posit Public Package Manager](https://posit.co/products/cloud/public-package-manager/) to install binaries for packages. Additionally, the instance has [Quarto](https://quarto.org/), [Docker](https://www.docker.com/), [conda](https://docs.conda.io/en/latest/), [ruff](https://docs.astral.sh/ruff/), [sqlfluff](https://sqlfluff.com/), [uv](https://docs.astral.sh/uv/), [duckdb](https://duckdb.org/), [gh](https://cli.github.com/), [TinyTeX](https://yihui.org/tinytex/), and [Rust](https://www.rust-lang.org/) installed, as well as a number of common system libraries used in data science packages.
 
 If you think another tool should be included in the default setup, please file an issue or pull request.
 
@@ -184,7 +184,7 @@ uv python list
 
 **Note**: Conda is still installed on the instance for older projects that require it. The base conda environment is set not to auto-activate.
 
-### VS Code (<http://localhost:8080/>)
+### VS Code (Browser) (<http://localhost:8080/>)
 
 VS Code should now be running. If you open <http://localhost:8080/>, you'll get a start up message that tells you where the credential file is. You can see the password with
 
@@ -217,6 +217,29 @@ sudo adduser your_username
 and follow the prompts. Then, visit <http://localhost:8787/> and enter the credentials you just created.
 
 RStudio is configured to run R in a [blank slate](https://rstats.wtf/source-and-blank-slates#always-start-r-with-a-blank-slate) by default.
+
+### Connecting from Local IDEs
+
+Instead of using the browser-based IDEs, you can connect your local VS Code or Positron to the instance via SSH.
+
+First, set your default project and configure SSH for your GCP instances:
+
+```bash
+gcloud config set project "$PROJECT_ID"
+gcloud compute config-ssh
+```
+
+This adds all your instances to `~/.ssh/config`. You can then connect using the hostname format: `instance-name.zone.project-id`.
+
+Note that by default, GCP assigns emphemeral external IP addresses to instances. That means when you stop and restart an instance, it will likely get a new external IP address. To assign a persistent external IP address, contact SRCC (`srcc-support@stanford.edu`) and CC Malcolm (`malcolmbarrett@stanford.edu`), requesting that they provision you one for your instance. You will need to provide them with the instance name and project. Depending on which IP gets assigned, you may need to re-run `gcloud compute config-ssh` to update your `~/.ssh/config` file.
+
+Then, in your local IDE:
+
+**VS Code**: Install the [Remote-SSH extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh) and connect to your instance through the Command Palette.
+
+**Positron**: Use the built-in [Remote SSH feature](https://positron.posit.co/remote-ssh.html) to connect to the same hostname.
+
+Both IDEs handle port forwarding automatically, giving you the same development experience as working locally.
 
 ### Transferring data from buckets
 
@@ -258,7 +281,7 @@ sudo resize2fs /name/of/disk
 
 Where `/name/of/disk` is the name listed in `df -h`.
 
-Run `df -h` again to confirm the disk is resized.
+Run `df -h` again to confirm the disk is resized. You may need to stop and restart the instance for the changes to take effect.
 
 ### Changing the machine type
 
