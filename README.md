@@ -258,7 +258,7 @@ sudo resize2fs /name/of/disk
 
 Where `/name/of/disk` is the name listed in `df -h`.
 
-Run `df -h` again to confirm the disk is resized.
+Run `df -h` again to confirm the disk is resized. You may need to stop and restart the instance for the changes to take effect.
 
 ### Changing the machine type
 
