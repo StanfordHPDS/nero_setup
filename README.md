@@ -26,7 +26,7 @@ ZONE="us-west1-c"
 # see all machine types with:
 # gcloud compute machine-types list --zones="$ZONE"
 # 8 vCPUs (4 cores) and 30 GB RAM
-MACHINE_TYPE="n1-standard-8" 
+MACHINE_TYPE="n1-standard-8"
 DISK_SIZE="200" # in GB
 
 # Recommended as the setup script assumes this OS
@@ -72,7 +72,7 @@ gcloud compute ssh --zone "$ZONE" "$INSTANCE_NAME" --project "$PROJECT_ID"
 When you've successfully SSH'd into the server, run the installation script:
 
 ```bash
-curl -fsSL https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1.0.3/setup.sh | bash
+curl -fsSL https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1.1.0/setup.sh | bash
 ```
 
 ![](img/install_start.gif)
@@ -85,11 +85,35 @@ After the script as completed, the server will reboot to finish updating the Lin
 
 It will take a few moments for the server to reboot.
 
-Log back in with the ports for VS Code and RStudio open. 
+Log back in with the ports for VS Code and RStudio open.
 
 ```bash
 gcloud compute ssh --zone "$ZONE" "$INSTANCE_NAME" --project "$PROJECT_ID" \
   -- -L 8787:localhost:8787 -L 8080:localhost:8080
+```
+
+### Updating an existing instance
+
+To update the software on an existing instance, SSH into your server and run:
+
+```bash
+curl -fsSL https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1.1.0/update.sh | bash
+```
+
+This will update system packages, R, Quarto, RStudio Server, VS Code, DuckDB, and development tools. Unlike the setup script, no reboot is required.
+
+Use uv to manage Python versions on a per-project basis. See the [Using the instance](#using-the-instance) section below for more information.
+
+You may also want to manage R on a per-project basis with rig and the `renv` package.
+
+You can also update specific components only:
+
+```bash
+# Update only RStudio Server
+curl -fsSL https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1.1.0/update.sh | bash -s -- --rstudio
+
+# See all options
+curl -fsSL https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1.1.0/update.sh | bash -s -- --help
 ```
 
 ## Using the instance
@@ -127,19 +151,38 @@ However, if older code you are running expects a credentials file, you can creat
 gcloud auth application-default login
 ```
 
-Note where the file is created in case you need to reference it. 
+Note where the file is created in case you need to reference it.
 
-### conda
+### Python Package Management with uv
 
-Conda has been set up and configured on the instance already. You will always be in a conda environment (`base` by default), so make sure to prefer `conda install` over `pip` and to make a new environment for any project you are working on with:
+We use [uv](https://docs.astral.sh/uv/) as our primary Python package manager. It's fast and automatically manages virtual environments. Here's how to use it:
 
 ```bash
-conda create --name <my-env> python=<python_version>
+# Create a new project
+uv init my-project
+cd my-project
+
+# Pin a specific Python version (creates .python-version file)
+uv python pin 3.12
+
+# Add packages
+uv add pandas numpy scikit-learn
+
+# Run Python scripts
+uv run script_name.py
+
+# Run Quarto documents
+uv run quarto render document.qmd
 ```
 
-If you are not sure which Python version to use, check `python --version` to see what you currently have installed as the default.
+Each project automatically gets its own isolated environment—no manual activation is needed. The Python version is controlled by the `.python-version` file in your project directory.
 
-Note that the instance also has uv installed, an alternate way to manage packages and environments in Python, but this for future exploration. Currently, our lab agreement is to use conda.
+To see available Python versions:
+```bash
+uv python list
+```
+
+**Note**: Conda is still installed on the instance for older projects that require it. The base conda environment is set not to auto-activate.
 
 ### VS Code (<http://localhost:8080/>)
 
@@ -153,13 +196,13 @@ Make sure to replace the path with the path in the startup message.
 
 The Python, Quarto, and Jupyter extensions are already installed.
 
-We also recommend activating a Python interpreter for your session, ideally matching a conda environment you have set up for the project. This allows the different spaces (Quarto, IPython, etc) to use the same Python interpreter.
+We also recommend activating a Python interpreter for your session, ideally matching the uv environment for your project. This allows the different spaces (Quarto, IPython, etc.) to use the same Python interpreter.
 
-First, Use `CMD/CTRL + Shift + P` to open the command palette and search for the Python interpreter option from the Python extension.
+First, use `CMD/CTRL + Shift + P` to open the command palette and search for the Python interpreter option from the Python extension.
 
 ![](img/select_interpret.png)
 
-Then pick the environment and interpreter you want.
+Then pick the environment and interpreter you want. For uv projects, look for the `.venv` directory in your project folder.
 
 ![](img/activate_env.png)
 
@@ -213,7 +256,7 @@ If the disk doesn't have approximately the same size you resized to, run:
 sudo resize2fs /name/of/disk
 ```
 
-Where `/name/of/disk` is the name listed in `df -h`. 
+Where `/name/of/disk` is the name listed in `df -h`.
 
 Run `df -h` again to confirm the disk is resized.
 
@@ -221,14 +264,14 @@ Run `df -h` again to confirm the disk is resized.
 
 The default value for the `MACHINE_TYPE` is `"n1-standard-8"`, a machine that has 8 vCPUs (4 cores) and 30 GB RAM. You can change the machine type after creation by stopping the instance, running `gcloud compute instances set-machine-type`, and restarting the instance.
 
-For instance, if `"n1-standard-8"` suits most of your needs but you occassionally need to do more intensive computation, you could temporarily change the instance to use `"n1-highmem-32"`, which has has 32 vCPUs and 208 GB RAM. 
+For instance, if `"n1-standard-8"` suits most of your needs but you occassionally need to do more intensive computation, you could temporarily change the instance to use `"n1-highmem-32"`, which has has 32 vCPUs and 208 GB RAM.
 
 ```bash
 INSTANCE_NAME="your-instance-name"
 ZONE="your-instance-zone"
 
 # Example: Change to n1-highmem-32
-NEW_MACHINE_TYPE="n1-highmem-32"  
+NEW_MACHINE_TYPE="n1-highmem-32"
 
 # Stop the instance
 gcloud compute instances stop "$INSTANCE_NAME" --zone="$ZONE"
