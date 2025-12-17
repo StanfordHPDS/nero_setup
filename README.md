@@ -8,12 +8,12 @@ This repository contains instructions for setting up a new Nero instance. First,
 
 **NOTE**: These instructions are in bash and thus for Mac and Linux users. If you are a Windows user, you'll either need to adapt these instructions for PowerShell or use [Windows Subsystem for Linux (WSL)](https://learn.microsoft.com/en-us/windows/wsl/install).
 
-For example, to create `my-instance` on the Nero project `som-nero-phi-sherrir-afc`, set the bash variables `INSTANCE_NAME` and `PROJECT_ID`:
+For example, to create `my-instance` on the Nero project `som-nero-phi-my-project`, set the bash variables `INSTANCE_NAME` and `PROJECT_ID`:
 
 ```bash
 # CHANGE THIS TO THE NAME YOU WANT FOR YOUR INSTANCE
 INSTANCE_NAME="my-instance"
-PROJECT_ID="som-nero-phi-sherrir-afc"
+PROJECT_ID="som-nero-phi-my-project"
 ```
 
 ![](img/first_vars.gif)
