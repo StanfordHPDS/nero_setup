@@ -72,7 +72,7 @@ gcloud compute ssh --zone "$ZONE" "$INSTANCE_NAME" --project "$PROJECT_ID"
 When you've successfully SSH'd into the server, run the installation script:
 
 ```bash
-curl -fsSL https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1.1.2/setup.sh | bash
+curl -fsSL https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1.2.0/setup.sh | bash
 ```
 
 ![](img/install_start.gif)
@@ -97,7 +97,7 @@ gcloud compute ssh --zone "$ZONE" "$INSTANCE_NAME" --project "$PROJECT_ID" \
 To update the software on an existing instance, SSH into your server and run:
 
 ```bash
-curl -fsSL https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1.1.2/update.sh | bash
+curl -fsSL https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1.2.0/update.sh | bash
 ```
 
 This will update system packages, R, Quarto, RStudio Server, VS Code, DuckDB, and development tools. Unlike the setup script, no reboot is required.
@@ -110,10 +110,10 @@ You can also update specific components only:
 
 ```bash
 # Update only RStudio Server
-curl -fsSL https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1.1.2/update.sh | bash -s -- --rstudio
+curl -fsSL https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1.2.0/update.sh | bash -s -- --rstudio
 
 # See all options
-curl -fsSL https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1.1.2/update.sh | bash -s -- --help
+curl -fsSL https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1.2.0/update.sh | bash -s -- --help
 ```
 
 ## Using the instance
