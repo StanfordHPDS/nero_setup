@@ -1,0 +1,105 @@
+name: Update GCP setup release
+
+on:
+  repository_dispatch:
+    types: [gcp_setup_released]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: GCP setup release tag; leave blank for the latest stable release
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: update-gcp-setup-release
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: main
+          persist-credentials: false
+      - name: Validate release and update README
+        id: update
+        env:
+          DISPATCH_TAG: ${{ github.event.client_payload.tag || '' }}
+          MANUAL_TAG: ${{ inputs.tag || '' }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          requested_tag="${DISPATCH_TAG:-$MANUAL_TAG}"
+          release_json="$RUNNER_TEMP/gcp-setup-release.json"
+
+          if [[ -n "$requested_tag" ]]; then
+            if [[ ! "$requested_tag" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+              printf 'invalid GCP setup release tag: %s\n' "$requested_tag" >&2
+              exit 1
+            fi
+            gh api "repos/StanfordHPDS/gcp_setup_script/releases/tags/$requested_tag" > "$release_json"
+            python3 scripts/update_gcp_release.py \
+              --release-json "$release_json" \
+              --requested-tag "$requested_tag" \
+              --output "$GITHUB_OUTPUT"
+          else
+            gh api repos/StanfordHPDS/gcp_setup_script/releases/latest > "$release_json"
+            python3 scripts/update_gcp_release.py \
+              --release-json "$release_json" \
+              --output "$GITHUB_OUTPUT"
+          fi
+      - name: Open or refresh update pull request
+        if: steps.update.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.NERO_UPDATE_TOKEN }}
+          UPDATE_TAG: ${{ steps.update.outputs.tag }}
+        run: |
+          set -euo pipefail
+          branch="automation/update-gcp-release"
+          body="$RUNNER_TEMP/gcp-update-pr.md"
+
+          if [[ -z "${GH_TOKEN:-}" ]]; then
+            printf 'NERO_UPDATE_TOKEN must be a fine-grained token with Contents and Pull requests write access to StanfordHPDS/nero_setup\n' >&2
+            exit 1
+          fi
+          gh auth setup-git
+          git config user.name "Malcolm Barrett"
+          git config user.email "malcolmbarrett@gmail.com"
+          remote_ref="refs/heads/$branch"
+          set +e
+          git ls-remote --exit-code --heads origin "$remote_ref" > /dev/null
+          branch_status=$?
+          set -e
+          if [[ $branch_status -eq 0 ]]; then
+            git fetch origin "$remote_ref:refs/remotes/origin/$branch"
+          elif [[ $branch_status -ne 2 ]]; then
+            exit "$branch_status"
+          fi
+          git checkout -B "$branch"
+          git add README.md
+          git commit -m "update GCP setup scripts to $UPDATE_TAG"
+          git push --force-with-lease="$remote_ref" origin "HEAD:$remote_ref"
+
+          cat > "$body" <<EOF
+          A stable GCP setup release is available. This updates every setup and update command in the README to [$UPDATE_TAG](https://github.com/StanfordHPDS/gcp_setup_script/releases/tag/$UPDATE_TAG).
+
+          The workflow verified that the published release contains both wrapper assets before editing the README.
+          EOF
+
+          number=$(gh pr list --state open --head "$branch" --json number --jq '.[0].number')
+          if [[ -n "$number" ]]; then
+            gh pr edit "$number" --title "update GCP setup scripts to $UPDATE_TAG" --body-file "$body"
+          else
+            gh pr create --base main --head "$branch" \
+              --title "update GCP setup scripts to $UPDATE_TAG" \
+              --body-file "$body"
+          fi
+      - name: Record no-op
+        if: steps.update.outputs.changed == 'false'
+        env:
+          UPDATE_TAG: ${{ steps.update.outputs.tag }}
+        run: printf 'README already uses %s\n' "$UPDATE_TAG" >> "$GITHUB_STEP_SUMMARY"

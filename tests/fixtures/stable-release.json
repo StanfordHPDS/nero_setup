@@ -1,0 +1,18 @@
+{
+  "tag_name": "v1.2.1",
+  "draft": false,
+  "prerelease": false,
+  "published_at": "2026-10-08T18:08:27Z",
+  "assets": [
+    {
+      "name": "setup.sh",
+      "state": "uploaded",
+      "browser_download_url": "https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1.2.1/setup.sh"
+    },
+    {
+      "name": "update.sh",
+      "state": "uploaded",
+      "browser_download_url": "https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1.2.1/update.sh"
+    }
+  ]
+}

@@ -72,18 +72,16 @@ gcloud compute ssh --zone "$ZONE" "$INSTANCE_NAME" --project "$PROJECT_ID"
 When you've successfully SSH'd into the server, run the installation script:
 
 ```bash
-curl -fsSL https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1.2.0/setup.sh | bash
+curl -fsSL https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1.2.1/setup.sh | bash
 ```
 
 ![](img/install_start.gif)
 
 This process will take several minutes to run.
 
-After the script as completed, the server will reboot to finish updating the Linux kernel. This is also intended to finish updating the paths for all the new software. Eventually, this will disconnect you.
+After the script has completed, log out and back in before using Docker without `sudo`. The setup installs the current hpds CLI and uses its complete server profile; it does not perform a blanket system upgrade or reboot the server.
 
 ![](img/install_finished.gif)
-
-It will take a few moments for the server to reboot.
 
 Log back in with the ports for VS Code and RStudio open.
 
@@ -97,24 +95,14 @@ gcloud compute ssh --zone "$ZONE" "$INSTANCE_NAME" --project "$PROJECT_ID" \
 To update the software on an existing instance, SSH into your server and run:
 
 ```bash
-curl -fsSL https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1.2.0/update.sh | bash
+curl -fsSL https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1.2.1/update.sh | bash
 ```
 
-This will update system packages, R, Quarto, RStudio Server, VS Code, DuckDB, and development tools. Unlike the setup script, no reboot is required.
+This updates hpds itself and then reconciles the complete server profile, including system libraries, Docker, R, Python, Quarto, TinyTeX, RStudio Server, code-server, and the command-line development tools. No reboot is required.
 
 Use uv to manage Python versions on a per-project basis. See the [Using the instance](#using-the-instance) section below for more information.
 
 You may also want to manage R on a per-project basis with rig and the `renv` package.
-
-You can also update specific components only:
-
-```bash
-# Update only RStudio Server
-curl -fsSL https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1.2.0/update.sh | bash -s -- --rstudio
-
-# See all options
-curl -fsSL https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1.2.0/update.sh | bash -s -- --help
-```
 
 ## Using the instance
 
@@ -122,7 +110,7 @@ We recommend stopping the instance when you are not using it to save costs.
 
 ### Software
 
-Each instance has the most recent versions of Python and R available for Ubuntu 24. Both `pip` and `install.packages()` use [Posit Public Package Manager](https://posit.co/products/cloud/public-package-manager/) to install binaries for packages. Additionally, the instance has [Quarto](https://quarto.org/), [Docker](https://www.docker.com/), [conda](https://docs.conda.io/en/latest/), [ruff](https://docs.astral.sh/ruff/), [sqlfluff](https://sqlfluff.com/), [uv](https://docs.astral.sh/uv/), [duckdb](https://duckdb.org/), [gh](https://cli.github.com/), [TinyTeX](https://yihui.org/tinytex/), and [Rust](https://www.rust-lang.org/) installed, as well as a number of common system libraries used in data science packages.
+Each instance has the most recent versions of Python and R available for Ubuntu 24. Both `pip` and `install.packages()` use [Posit Public Package Manager](https://posit.co/products/cloud/public-package-manager/) to install binaries for packages. Additionally, the instance has [Quarto](https://quarto.org/), [Docker](https://www.docker.com/), [ruff](https://docs.astral.sh/ruff/), [sqlfluff](https://sqlfluff.com/), [uv](https://docs.astral.sh/uv/), [duckdb](https://duckdb.org/), [gh](https://cli.github.com/), [TinyTeX](https://yihui.org/tinytex/), and [Rust](https://www.rust-lang.org/) installed, as well as a number of common system libraries used in data science packages.
 
 If you think another tool should be included in the default setup, please file an issue or pull request.
 
@@ -181,8 +169,6 @@ To see available Python versions:
 ```bash
 uv python list
 ```
-
-**Note**: Conda is still installed on the instance for older projects that require it. The base conda environment is set not to auto-activate.
 
 ### VS Code (Browser) (<http://localhost:8080/>)
 
