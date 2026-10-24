@@ -79,7 +79,7 @@ curl -fsSL https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1
 
 This process will take several minutes to run.
 
-After the script has completed, log out and back in before using Docker without `sudo`. The setup installs the current hpds CLI and uses its complete server profile; it does not perform a blanket system upgrade or reboot the server.
+The setup first applies pending Ubuntu system updates, then installs the current hpds CLI and uses its complete server profile. If those updates need a reboot, the script ends by asking you to run `sudo reboot` and reconnect; otherwise no reboot is needed. After the script has completed, log out and back in before using Docker without `sudo`.
 
 ![](img/install_finished.gif)
 
