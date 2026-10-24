@@ -103,7 +103,10 @@ jobs:
             gh pr create --base main --head "$branch" \
               --title "update GCP setup scripts to $UPDATE_TAG" \
               --body-file "$body"
+            number=$(gh pr list --state open --head "$branch" --json number --jq '.[0].number')
           fi
+          # Merges once the required updater check passes on main.
+          gh pr merge "$number" --auto --merge
       - name: Record no-op
         if: steps.update.outputs.changed == 'false'
         env:
