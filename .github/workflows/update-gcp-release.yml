@@ -52,23 +52,29 @@ jobs:
               --release-json "$release_json" \
               --output "$GITHUB_OUTPUT"
           fi
+      - name: Get a hpds-release-bot token
+        id: bot
+        if: steps.update.outputs.changed == 'true'
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: Iv23liXHqe7enFCScchu
+          private-key: ${{ secrets.HPDS_BOT_PRIVATE_KEY }}
+          repositories: nero_setup
+          permission-contents: write
+          permission-pull-requests: write
       - name: Open or refresh update pull request
         if: steps.update.outputs.changed == 'true'
         env:
-          GH_TOKEN: ${{ secrets.NERO_UPDATE_TOKEN }}
+          GH_TOKEN: ${{ steps.bot.outputs.token }}
           UPDATE_TAG: ${{ steps.update.outputs.tag }}
         run: |
           set -euo pipefail
           branch="automation/update-gcp-release"
           body="$RUNNER_TEMP/gcp-update-pr.md"
 
-          if [[ -z "${GH_TOKEN:-}" ]]; then
-            printf 'NERO_UPDATE_TOKEN must be a fine-grained token with Contents and Pull requests write access to StanfordHPDS/nero_setup\n' >&2
-            exit 1
-          fi
           gh auth setup-git
-          git config user.name "Malcolm Barrett"
-          git config user.email "malcolmbarrett@gmail.com"
+          git config user.name "hpds-release-bot[bot]"
+          git config user.email "347442809+hpds-release-bot[bot]@users.noreply.github.com"
           remote_ref="refs/heads/$branch"
           set +e
           git ls-remote --exit-code --heads origin "$remote_ref" > /dev/null

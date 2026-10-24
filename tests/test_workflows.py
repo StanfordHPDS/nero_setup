@@ -1,4 +1,5 @@
 from pathlib import Path
+import re
 import unittest
 
 
@@ -19,7 +20,11 @@ class WorkflowTests(unittest.TestCase):
             "releases/tags/$requested_tag",
             "--requested-tag",
             "scripts/update_gcp_release.py",
-            "secrets.NERO_UPDATE_TOKEN",
+            "actions/create-github-app-token@v3",
+            "secrets.HPDS_BOT_PRIVATE_KEY",
+            "permission-contents: write",
+            "permission-pull-requests: write",
+            "hpds-release-bot[bot]",
             "gh auth setup-git",
             "git ls-remote --exit-code --heads",
             "--force-with-lease",
@@ -27,8 +32,11 @@ class WorkflowTests(unittest.TestCase):
         ):
             self.assertIn(required, workflow)
         self.assertNotIn("schedule:", workflow)
-        self.assertNotIn("contents: write", workflow)
-        self.assertNotIn("pull-requests: write", workflow)
+        self.assertNotIn("NERO_UPDATE_TOKEN", workflow)
+        self.assertNotIn("Malcolm Barrett", workflow)
+        # The workflow's own token stays read-only; writes use the app token.
+        self.assertIsNone(re.search(r"^\s*contents: write", workflow, re.MULTILINE))
+        self.assertIsNone(re.search(r"^\s*pull-requests: write", workflow, re.MULTILINE))
 
     def test_ci_runs_the_updater_tests(self) -> None:
         workflow = (ROOT / ".github/workflows/ci.yml").read_text()
