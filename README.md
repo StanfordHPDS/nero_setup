@@ -72,7 +72,7 @@ gcloud compute ssh --zone "$ZONE" "$INSTANCE_NAME" --project "$PROJECT_ID"
 When you've successfully SSH'd into the server, run the installation script:
 
 ```bash
-curl -fsSL https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1.3.1/setup.sh | bash
+curl -fsSL https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1.3.2/setup.sh | bash
 ```
 
 ![](img/install_start.gif)
@@ -95,7 +95,7 @@ gcloud compute ssh --zone "$ZONE" "$INSTANCE_NAME" --project "$PROJECT_ID" \
 To update the software on an existing instance, SSH into your server and run:
 
 ```bash
-curl -fsSL https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1.3.1/update.sh | bash
+curl -fsSL https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1.3.2/update.sh | bash
 ```
 
 This updates hpds itself and then reconciles the complete server profile, including system libraries, Docker, R, Python, Quarto, TinyTeX, RStudio Server, code-server, and the command-line development tools. No reboot is required.
