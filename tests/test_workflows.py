@@ -29,6 +29,7 @@ class WorkflowTests(unittest.TestCase):
             "git ls-remote --exit-code --heads",
             "--force-with-lease",
             "automation/update-gcp-release",
+            'gh pr merge "$number" --auto --merge',
         ):
             self.assertIn(required, workflow)
         self.assertNotIn("schedule:", workflow)
