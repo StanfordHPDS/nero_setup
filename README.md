@@ -72,7 +72,7 @@ gcloud compute ssh --zone "$ZONE" "$INSTANCE_NAME" --project "$PROJECT_ID"
 When you've successfully SSH'd into the server, run the installation script:
 
 ```bash
-curl -fsSL https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1.3.2/setup.sh | bash
+curl -fsSL https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1.4.0/setup.sh | bash
 ```
 
 ![](img/install_start.gif)
@@ -97,7 +97,7 @@ gcloud compute ssh --zone "$ZONE" "$INSTANCE_NAME" --project "$PROJECT_ID" \
 To update the software on an existing instance, SSH into your server and run:
 
 ```bash
-curl -fsSL https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1.3.2/update.sh | bash
+curl -fsSL https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1.4.0/update.sh | bash
 ```
 
 This updates hpds itself and then reconciles the complete server profile, including pending Ubuntu system updates, system libraries, Docker, R, Python, Quarto, TinyTeX, RStudio Server, code-server, and the command-line development tools. As with the initial setup, it prints one line per step and appends the full output to `~/hpds-setup.log`. The update script never reboots the server. If the system updates need a reboot, hpds lists it under the next steps; run `sudo reboot` when it suits you and reconnect after a minute or two.
