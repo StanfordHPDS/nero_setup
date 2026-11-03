@@ -79,7 +79,9 @@ curl -fsSL https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1
 
 This process will take several minutes to run.
 
-The setup first applies pending Ubuntu system updates, then installs the current hpds CLI and uses its complete server profile. If those updates need a reboot, the script reboots the server when it finishes; reconnect after a minute or two. Otherwise no reboot is needed. After the script has completed, log out and back in before using Docker without `sudo`.
+The script installs the current hpds CLI and runs its complete server profile. hpds applies pending Ubuntu system updates itself, then prints one line per step as it works and finishes with a short list of next steps. The full output of every step, including the hpds installer, is saved to `~/hpds-setup.log`. If a step fails, look there for the details, and share that file when you ask for help.
+
+If the system updates need a reboot, the script reboots the server when it finishes; reconnect after a minute or two. Otherwise no reboot is needed. After the script has completed, log out and back in before using Docker without `sudo`.
 
 ![](img/install_finished.gif)
 
@@ -98,7 +100,7 @@ To update the software on an existing instance, SSH into your server and run:
 curl -fsSL https://github.com/StanfordHPDS/gcp_setup_script/releases/download/v1.3.2/update.sh | bash
 ```
 
-This updates hpds itself and then reconciles the complete server profile, including system libraries, Docker, R, Python, Quarto, TinyTeX, RStudio Server, code-server, and the command-line development tools. No reboot is required.
+This updates hpds itself and then reconciles the complete server profile, including pending Ubuntu system updates, system libraries, Docker, R, Python, Quarto, TinyTeX, RStudio Server, code-server, and the command-line development tools. As with the initial setup, it prints one line per step and appends the full output to `~/hpds-setup.log`. The update script never reboots the server. If the system updates need a reboot, hpds lists it under the next steps; run `sudo reboot` when it suits you and reconnect after a minute or two.
 
 Use uv to manage Python versions on a per-project basis. See the [Using the instance](#using-the-instance) section below for more information.
 
